@@ -11,7 +11,9 @@
     @form(routes.Application.update(id)) {
         
         <fieldset>
-        
+            <!-- In the sample ID is send via GET part of url, anyway you can also send it via POST hidden param, to make it accessible in the validation method -->
+            <input name="id" type="hidden" value='@computerForm("id").value'/>
+
             @inputText(computerForm("name"), '_label -> "Computer name")
             @inputText(computerForm("introduced"), '_label -> "Introduced date")
             @inputText(computerForm("discontinued"), '_label -> "Discontinued date")
