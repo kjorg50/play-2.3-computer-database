@@ -13,31 +13,31 @@ import com.avaje.ebean.*;
 /**
  * Computer entity managed by Ebean
  */
-@Entity 
+@Entity
 public class Computer extends Model {
 
     private static final long serialVersionUID = 1L;
 
 	@Id
     public Long id;
-    
+
     @Constraints.Required
     public String name;
-    
+
     @Formats.DateTime(pattern="yyyy-MM-dd")
     public Date introduced;
-    
+
     @Formats.DateTime(pattern="yyyy-MM-dd")
     public Date discontinued;
-    
+
     @ManyToOne
     public Company company;
-    
+
     /**
      * Generic query helper for entity Computer with id Long
      */
-    public static Finder<Long,Computer> find = new Finder<Long,Computer>(Long.class, Computer.class); 
-    
+    public static Finder<Long,Computer> find = new Finder<Long,Computer>(Long.class, Computer.class);
+
     /**
      * Return a page of computer
      *
@@ -48,7 +48,7 @@ public class Computer extends Model {
      * @param filter Filter applied on the name column
      */
     public static Page<Computer> page(int page, int pageSize, String sortBy, String order, String filter) {
-        return 
+        return
             find.where()
                 .ilike("name", "%" + filter + "%")
                 .orderBy(sortBy + " " + order)
@@ -60,23 +60,15 @@ public class Computer extends Model {
 
     public List<ValidationError> validate() {
 
-        List<ValidationError> errors = new ArrayList<ValidationError>();
+        // Note that changes in this model where NOT required, I made them to keep code cleaner.
+        // I.e. You don't need to create getters for fields like name, or id as they are public
 
-        //if(Computer.find.where().eq("name", getName()).findRowCount() != 0){
-        Logger.debug("current id: " + getId());
-        if(Computer.find.where().eq("name", getName()).ne("id", getId()).findRowCount() != 0){
+        List<ValidationError> errors = new ArrayList<>();
+        if (Computer.find.where().ilike("name", name).ne("id", id).findRowCount() != 0) {
             errors.add(new ValidationError("name", "Name must be unique. That value is already taken."));
         }
 
         return errors.isEmpty() ? null : errors;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Long getId() {
-        return id;
     }
 }
 
